@@ -1,3 +1,4 @@
+import RateLimitBanner from "@/components/rate-limit-banner";
 import SummarizeSection from "@/components/summarize-section";
 import { Separator } from "@/components/ui/separator";
 
@@ -24,7 +25,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* <RateLimitBanner /> */}
+        <RateLimitBanner />
 
         {/* Main Content */}
         <div className="space-y-8">
