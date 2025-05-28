@@ -1,3 +1,4 @@
+import SummarizeSection from "@/components/summarize-section";
 import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
@@ -27,7 +28,7 @@ export default function Home() {
 
         {/* Main Content */}
         <div className="space-y-8">
-          {/* <SummarizeSection /> */}
+          <SummarizeSection />
 
           <Separator className="my-8" />
 
