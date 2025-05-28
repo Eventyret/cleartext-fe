@@ -1,6 +1,7 @@
+import LanguageDetectSection from "@/components/LanguageDetectSection";
 import RateLimitBanner from "@/components/rate-limit-banner";
-import RewriteSection from "@/components/rewrite-section";
-import SummarizeSection from "@/components/summarize-section";
+import RewriteSection from "@/components/RewriteSection";
+import SummarizeSection from "@/components/SummarizeSection";
 import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
@@ -38,7 +39,7 @@ export default function Home() {
 
           <Separator className="my-8" />
 
-          {/* <LanguageDetectSection /> */}
+          <LanguageDetectSection />
         </div>
 
         <div className="text-center mt-16 text-slate-500 text-sm">
