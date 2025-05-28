@@ -1,3 +1,4 @@
+import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import LanguageDetectSection from "@/components/LanguageDetectSection";
 import RateLimitBanner from "@/components/rate-limit-banner";
 import RewriteSection from "@/components/RewriteSection";
@@ -47,7 +48,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* <KeyboardShortcuts /> */}
+      <KeyboardShortcuts />
     </div>
   );
 }

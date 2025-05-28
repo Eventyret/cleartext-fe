@@ -12,7 +12,7 @@ interface LanguageDetectApiResponse {
   language_name?: string;
   confidence?: number;
   score?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Define the action return type

@@ -16,7 +16,7 @@ export function ResultDisplay({ result, label }: ResultDisplayProps) {
       toast.success("Copied!", {
         description: `${label} copied to clipboard`,
       });
-    } catch (err) {
+    } catch {
       toast.error("Failed to copy", {
         description: "Could not copy to clipboard",
       });

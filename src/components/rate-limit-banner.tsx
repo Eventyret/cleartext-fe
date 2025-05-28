@@ -32,17 +32,20 @@ export default function RateLimitBanner() {
 
   // Update rate limit info when received from API responses
   useEffect(() => {
-    const handleRateLimitUpdate = (event: CustomEvent) => {
+    const handleRateLimitUpdate = (event: CustomEvent<RateLimitInfo>) => {
       const info = event.detail;
       setRateLimitInfo(info);
       localStorage.setItem("rateLimitInfo", JSON.stringify(info));
     };
 
-    window.addEventListener("ratelimit-updated" as any, handleRateLimitUpdate);
+    window.addEventListener(
+      "ratelimit-updated",
+      handleRateLimitUpdate as EventListener
+    );
     return () => {
       window.removeEventListener(
-        "ratelimit-updated" as any,
-        handleRateLimitUpdate
+        "ratelimit-updated",
+        handleRateLimitUpdate as EventListener
       );
     };
   }, []);

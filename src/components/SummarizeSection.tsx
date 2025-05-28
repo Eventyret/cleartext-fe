@@ -73,7 +73,7 @@ export default function SummarizeSection() {
       toast.success("Copied!", {
         description: "Summary copied to clipboard",
       });
-    } catch (err) {
+    } catch {
       toast.error("Failed to copy", {
         description: "Could not copy to clipboard",
       });

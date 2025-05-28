@@ -13,7 +13,7 @@ export interface ApiResponse<T> {
 
 export async function makeApiRequest<T>(
   endpoint: string,
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   apiKey = process.env.API_KEY
 ): Promise<ApiResponse<T>> {
   try {

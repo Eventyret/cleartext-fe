@@ -7,7 +7,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 interface RewriteApiResponse {
   rewritten?: string;
   result?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Define the action return type
