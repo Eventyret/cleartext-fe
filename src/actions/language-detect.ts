@@ -73,12 +73,9 @@ export async function detectLanguage(
 
     const data = response.data;
     const result: LanguageDetectResult = {
-      code: data?.language || data?.code || data?.lang || "unknown",
-      name:
-        data?.name ||
-        data?.language_name ||
-        getLanguageName(data?.language || data?.code || "unknown"),
-      confidence: data?.confidence || data?.score,
+      code: data?.language || "unknown",
+      name: getLanguageName(data?.language || "unknown"),
+      confidence: data?.confidence,
     };
 
     return {

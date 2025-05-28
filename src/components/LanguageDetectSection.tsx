@@ -78,6 +78,9 @@ export default function LanguageDetectSection() {
       case "de":
         sampleText = "Der schnelle braune Fuchs springt über den faulen Hund.";
         break;
+      case "no":
+        sampleText = "Den raske brune reven hopper over den late hunden.";
+        break;
       default:
         sampleText = "The quick brown fox jumps over the lazy dog.";
     }
@@ -183,6 +186,14 @@ export default function LanguageDetectSection() {
             onClick={() => fillSampleText("de")}
           >
             🇩🇪 German
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => fillSampleText("no")}
+          >
+            🇳🇴 Norwegian
           </Button>
         </div>
 

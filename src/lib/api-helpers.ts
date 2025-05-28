@@ -38,6 +38,17 @@ export async function makeApiRequest<T>(
     }
 
     if (!response.ok) {
+      // For 422 errors, try to get the specific error message
+      if (response.status === 422) {
+        try {
+          const errorData = await response.json();
+          const errorMessage =
+            errorData.detail || `API error: ${response.status}`;
+          return { success: false, error: errorMessage };
+        } catch {
+          return { success: false, error: `API error: ${response.status}` };
+        }
+      }
       throw new Error(`API error: ${response.status}`);
     }
 
