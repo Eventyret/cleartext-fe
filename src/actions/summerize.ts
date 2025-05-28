@@ -1,9 +1,30 @@
 "use server";
 
-import { sanitizeHtml } from "@/lib/sanitize";
+import { makeApiRequest, sanitizeHtml } from "@/lib/api-helpers";
 import { checkRateLimit } from "@/lib/rate-limit";
 
-export async function summarizeText(formData: FormData) {
+// Define the expected API response structure
+interface SummarizeApiResponse {
+  summary?: string;
+  result?: string;
+  [key: string]: any;
+}
+
+// Define the action return type
+interface SummarizeActionResult {
+  success: boolean;
+  data?: string;
+  error?: string;
+  rateLimit?: {
+    limit: number;
+    remaining: number;
+    reset: number;
+  };
+}
+
+export async function summarizeText(
+  formData: FormData
+): Promise<SummarizeActionResult> {
   const text = formData.get("text") as string;
   const length = formData.get("length") as string;
 
@@ -34,51 +55,29 @@ export async function summarizeText(formData: FormData) {
       return { success: false, error: rateLimitCheck.error };
     }
 
-    // Replace with your actual API endpoint
-    const response = await fetch(`${process.env.API_BASE_URL}/summarize`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": `${process.env.API_KEY}`,
-      },
-      body: JSON.stringify({ text, length }),
+    const response = await makeApiRequest<SummarizeApiResponse>("/summarize", {
+      text,
+      length,
     });
 
-    // Handle rate limiting
-    if (response.status === 429) {
-      return {
-        success: false,
-        error: "Rate limit exceeded. Please try again later.",
-      };
+    if (!response.success) {
+      return { success: false, error: response.error };
     }
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    // Extract rate limit headers if available
-    const rateLimit = {
-      limit: Number.parseInt(response.headers.get("X-RateLimit-Limit") || "0"),
-      remaining: Number.parseInt(
-        response.headers.get("X-RateLimit-Remaining") || "0"
-      ),
-      reset: Number.parseInt(response.headers.get("X-RateLimit-Reset") || "0"),
-    };
-
-    // Dispatch rate limit info to client if available
-    if (rateLimit.limit > 0) {
-      // This will be handled in the client component
-      console.log("Rate limit info:", rateLimit);
-    }
-
-    const data = await response.json();
 
     // Sanitize the response to prevent XSS
-    const summary = data.summary || data.result || data;
+    const summary =
+      response.data?.summary || response.data?.result || response.data;
+
+    // Ensure we always return a string
+    const sanitizedResult =
+      typeof summary === "string"
+        ? sanitizeHtml(summary)
+        : String(summary || "");
+
     return {
       success: true,
-      data: typeof summary === "string" ? sanitizeHtml(summary) : summary,
-      rateLimit,
+      data: sanitizedResult,
+      rateLimit: response.rateLimit,
     };
   } catch (error) {
     console.error("Summarize API error:", error);

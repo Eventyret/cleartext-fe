@@ -53,7 +53,7 @@ export default function SummarizeSection() {
 
       const response = await summarizeText(formData);
       if (response.success) {
-        setResult(response.data);
+        setResult(response.data || "");
       } else {
         setError(response.error || "Failed to summarize text");
       }

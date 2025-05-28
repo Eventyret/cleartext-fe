@@ -1,9 +1,30 @@
 "use server";
 
-import { sanitizeHtml } from "@/lib/sanitize";
+import { makeApiRequest, sanitizeHtml } from "@/lib/api-helpers";
 import { checkRateLimit } from "@/lib/rate-limit";
 
-export async function rewriteText(formData: FormData) {
+// Define the expected API response structure
+interface RewriteApiResponse {
+  rewritten?: string;
+  result?: string;
+  [key: string]: any;
+}
+
+// Define the action return type
+interface RewriteActionResult {
+  success: boolean;
+  data?: string;
+  error?: string;
+  rateLimit?: {
+    limit: number;
+    remaining: number;
+    reset: number;
+  };
+}
+
+export async function rewriteText(
+  formData: FormData
+): Promise<RewriteActionResult> {
   const text = formData.get("text") as string;
   const style = formData.get("style") as string;
 
@@ -31,51 +52,29 @@ export async function rewriteText(formData: FormData) {
       return { success: false, error: rateLimitCheck.error };
     }
 
-    // Replace with your actual API endpoint
-    const response = await fetch(`${process.env.API_BASE_URL}/rewrite`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": `${process.env.API_KEY}`,
-      },
-      body: JSON.stringify({ text, style }),
+    const response = await makeApiRequest<RewriteApiResponse>("/rewrite", {
+      text,
+      style,
     });
 
-    // Handle rate limiting
-    if (response.status === 429) {
-      return {
-        success: false,
-        error: "Rate limit exceeded. Please try again later.",
-      };
+    if (!response.success) {
+      return { success: false, error: response.error };
     }
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    // Extract rate limit headers if available
-    const rateLimit = {
-      limit: Number.parseInt(response.headers.get("X-RateLimit-Limit") || "0"),
-      remaining: Number.parseInt(
-        response.headers.get("X-RateLimit-Remaining") || "0"
-      ),
-      reset: Number.parseInt(response.headers.get("X-RateLimit-Reset") || "0"),
-    };
-
-    // Dispatch rate limit info to client if available
-    if (rateLimit.limit > 0) {
-      // This will be handled in the client component
-      console.log("Rate limit info:", rateLimit);
-    }
-
-    const data = await response.json();
 
     // Sanitize the response to prevent XSS
-    const rewritten = data.rewritten || data.result || data;
+    const rewritten =
+      response.data?.rewritten || response.data?.result || response.data;
+
+    // Ensure we always return a string
+    const sanitizedResult =
+      typeof rewritten === "string"
+        ? sanitizeHtml(rewritten)
+        : String(rewritten || "");
+
     return {
       success: true,
-      data: typeof rewritten === "string" ? sanitizeHtml(rewritten) : rewritten,
-      rateLimit,
+      data: sanitizedResult,
+      rateLimit: response.rateLimit,
     };
   } catch (error) {
     console.error("Rewrite API error:", error);
