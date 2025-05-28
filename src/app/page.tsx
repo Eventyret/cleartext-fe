@@ -1,4 +1,5 @@
 import RateLimitBanner from "@/components/rate-limit-banner";
+import RewriteSection from "@/components/rewrite-section";
 import SummarizeSection from "@/components/summarize-section";
 import { Separator } from "@/components/ui/separator";
 
@@ -33,7 +34,7 @@ export default function Home() {
 
           <Separator className="my-8" />
 
-          {/* <RewriteSection /> */}
+          <RewriteSection />
 
           <Separator className="my-8" />
 
